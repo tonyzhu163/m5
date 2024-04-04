@@ -9,17 +9,18 @@
 The goal of this milestone is to implement a scalable programming model and abstractions for processing large data sets in a distributed fashion.The core of the execution engine combines two higher order functions: a map function, which performs filtering and sorting and a reduce function, which performs a summarization operation. These functions operate over the distributed storage system implemented in the previous milestone, by serializing the distributed functions, attaching and running various tasks in parallel, managing all communications and data transfers between the various parts of the system.
 
 ## Table of Contents
-- Background & Context
-- Two Example Datasets
-- The Core MapReduce Abstractions
-- The Core MapReduce Implementation
-- Additional Features and Optimizations
-- A Handful of MapReduce Workflows
-- Bounded Iterative MapReduce Operation
-- Functionality Checklist
-- Reflections & The Way Forward
-- Tips & Submission
-- Feedback
+- [M5: Distributed Execution Engine](#m5-distributed-execution-engine)
+  - [Table of Contents](#table-of-contents)
+  - [Background \& Context](#background--context)
+  - [Two Example Datasets](#two-example-datasets)
+  - [The Core MapReduce Abstractions](#the-core-mapreduce-abstractions)
+  - [The Core MapReduce Implementation](#the-core-mapreduce-implementation)
+  - [Additional Features and Optimizations](#additional-features-and-optimizations)
+  - [A Handful of MapReduce Workflows](#a-handful-of-mapreduce-workflows)
+  - [Functionality Checklist](#functionality-checklist)
+  - [Reflections \& The Way Forward](#reflections--the-way-forward)
+  - [Notes](#notes)
+  - [FAQ](#faq)
 
 ## Background & Context
 
@@ -71,9 +72,9 @@ We will see the details of how this implemented after we discuss the core abstra
 
 | Service    | Description | Methods |
 | -------- | ------- | ------- |
-| mr  | A MapReduce implementation    |   **exec**     |
+| mr  | A MapReduce implementation    |   ``exec``     |
 
-The distributed mr service exposes a single method exec that requires the following parameters: (1) a parameter keys providing a list of keys of objects stored in the distributed object storage system, (2) a parameter map providing a Map function, and (3) a parameter reduce providing a Reduce function. Additional parameters—e.g., enabling in-memory storage, using special sorting, adding a combiner, limiting the number of reducers etc.—are optional.
+The distributed mr service exposes a single method ``exec`` that requires the following parameters: (1) a parameter keys providing a list of keys of objects stored in the distributed object storage system, (2) a parameter map providing a Map function, and (3) a parameter reduce providing a Reduce function. Additional parameters—e.g., enabling in-memory storage, using special sorting, adding a combiner, limiting the number of reducers etc.—are optional.
 
 To understand these abstractions, we use the NCDC dataset and a workflow that calculates the maximum temperature per year. The focus here is on how these abstractions look in our setting — refer to in-class material for additional examples on and intuition about these abstractions. The keys parameter in this example would be [0, 106, 212, 318, 424].
 
@@ -132,7 +133,7 @@ The output is a mapping from keys to values. Similar to map, these objects are n
 
 **Optional  — compact:** Between the map and reduce phase, the system additionally compacts the output of map by aggregating values prior to reaching the reducer. A developer can optionally provide a compact method that combines multiple map outputs to provide additional compaction before shuffling.
 
-## A MapReduce Implementation
+## The Core MapReduce Implementation
 
 In this implementation, the coordinator node is the one initiating the MapReduce computation. This node is responsible for orchestrating and overseeing the computation up to completion. This end-to-end orchestration can be thought of as split into four different phases.
 
@@ -265,3 +266,5 @@ You are allowed to submit as many times as you want up until the deadline; so su
 1) To distinguish between confusing names, we use the terms (1) Map and Reduce to talk about the phases of the MapReduce computation, (2) setMap and setReduce for the higher-order system-provided functions that take as inputs user-provided functions f, (3) mapper and reducer for the user-provided functions—named mapper and reducer, often followed by a number, in the handout examples—and (4) map and reduce for the JavaScript functions mentioned earlier.
 
 2)  In hierarchical file systems, we tend to solve this problem by using a different directory; but such a structure does not exist in distributed key-value stores. One idea would be to prefix all keys with a special identifier denoting that the key corresponds to an input or an output.
+
+## FAQ
